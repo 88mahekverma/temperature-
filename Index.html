@@ -5,6 +5,26 @@
 </head>
 <body>
   <h1>🏠 My Room Temperature</h1>
-  <h2>Temperature: Loading...</h2>
+  <h2 id="temp">🌡 Temperature: Loading...</h2>
+
+  <script>
+    setInterval(() => {
+      fetch("https://temperature-448aa-default-rtdb.asia-southeast1.firebasedatabase.app/room/temperature.json")
+        .then(response => response.json())
+        .then(data => {
+          if (data !== null) {
+            document.getElementById("temp").innerHTML =
+              "🌡 Temperature: " + data + " °C";
+          } else {
+            document.getElementById("temp").innerHTML =
+              "🌡 Temperature: No data yet";
+          }
+        })
+        .catch(() => {
+          document.getElementById("temp").innerHTML =
+            "🌡 Error connecting to Firebase";
+        });
+    }, 3000);
+  </script>
 </body>
 </html>
