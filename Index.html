@@ -1,30 +1,126 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Room Temperature</title>
-</head>
-<body>
-  <h1>🏠 My Room Temperature</h1>
-  <h2 id="temp">🌡 Temperature: Loading...</h2>
+  <title>Room Monitoring Dashboard</title>
 
-  <script>
-    setInterval(() => {
-      fetch("https://temperature-448aa-default-rtdb.asia-southeast1.firebasedatabase.app/room/temperature.json")
-        .then(response => response.json())
-        .then(data => {
-          if (data !== null) {
-            document.getElementById("temp").innerHTML =
-              "🌡 Temperature: " + data + " °C";
-          } else {
-            document.getElementById("temp").innerHTML =
-              "🌡 Temperature: No data yet";
-          }
-        })
-        .catch(() => {
-          document.getElementById("temp").innerHTML =
-            "🌡 Error connecting to Firebase";
-        });
-    }, 3000);
-  </script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 400px;
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .card {
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+    }
+
+    canvas {
+      margin-top: 15px;
+      background: white;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>🏠 Room Dashboard</h2>
+
+  <div class="card">
+    🌡 Temperature: <span id="temp">Loading...</span> °C
+  </div>
+
+  <div class="card">
+    💧 Humidity: <span id="humidity">Loading...</span> %
+  </div>
+
+  <canvas id="chart" height="200"></canvas>
+</div>
+
+<script>
+let tempData = [];
+let humidityData = [];
+let labels = [];
+
+const ctx = document.getElementById('chart').getContext('2d');
+
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Temperature (°C)',
+        borderColor: 'red',
+        data: tempData,
+        fill: false
+      },
+      {
+        label: 'Humidity (%)',
+        borderColor: 'blue',
+        data: humidityData,
+        fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    animation: false
+  }
+});
+
+setInterval(() => {
+  fetch("https://temperature-448aa-default-rtdb.asia-southeast1.firebasedatabase.app/room.json")
+    .then(res => res.json())
+    .then(data => {
+
+      if (data) {
+        let temp = data.temperature;
+        let humidity = data.humidity;
+
+        document.getElementById("temp").innerText = temp;
+        document.getElementById("humidity").innerText = humidity;
+
+        let time = new Date().toLocaleTimeString();
+
+        // keep last 20 values only
+        if (labels.length > 20) {
+          labels.shift();
+          tempData.shift();
+          humidityData.shift();
+        }
+
+        labels.push(time);
+        tempData.push(temp);
+        humidityData.push(humidity);
+
+        chart.update();
+      }
+    });
+
+}, 3000);
+</script>
+
 </body>
 </html>
