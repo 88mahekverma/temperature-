@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>LED Control</title>
+  <title>ESP32 LED Control</title>
 </head>
 <body>
 
-<h2>ESP32 LED Control</h2>
+<h2>LED Control Panel</h2>
 
-<button onclick="setLED('led1',1)">LED1 ON</button>
-<button onclick="setLED('led1',0)">LED1 OFF</button>
+<!-- Buttons -->
+<button onclick="setLED('red',1)">RED ON</button>
+<button onclick="setLED('red',0)">RED OFF</button>
 
-<button onclick="setLED('led2',1)">LED2 ON</button>
-<button onclick="setLED('led2',0)">LED2 OFF</button>
+<br><br>
 
-<button onclick="setLED('led3',1)">LED3 ON</button>
-<button onclick="setLED('led3',0)">LED3 OFF</button>
+<button onclick="setLED('green',1)">GREEN ON</button>
+<button onclick="setLED('green',0)">GREEN OFF</button>
+
+<br><br>
+
+<button onclick="setLED('blue',1)">BLUE ON</button>
+<button onclick="setLED('blue',0)">BLUE OFF</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
@@ -27,19 +32,22 @@ const firebaseConfig = {
   projectId: "temperature-448aa",
   storageBucket: "temperature-448aa.firebasestorage.app",
   messagingSenderId: "615581732215",
-  appId: "1:615581732215:web:b94355bdd96204df42a572"
+  appId: "1:615581732215:web:b94355bdd96204df42a572",
+  measurementId: "G-728K8BT7GP"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// Function to update LED values
 window.setLED = function(led, value) {
   set(ref(db, "led/" + led), value)
     .then(() => {
-      console.log("Updated:", led, value);
+      console.log(led + " updated to " + value);
     })
     .catch((error) => {
-      console.log("Error:", error);
+      console.log("Error: ", error);
     });
 }
 </script>
