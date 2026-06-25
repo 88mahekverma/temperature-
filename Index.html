@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ESP32 LED Control</title>
+  <title>LED Control</title>
 </head>
 <body>
 
-<h2>LED Control Panel</h2>
+<h2>ESP32 LED Control</h2>
 
-<button onclick="setLED('led1', 1)">LED 1 ON</button>
-<button onclick="setLED('led1', 0)">LED 1 OFF</button>
-<br><br>
+<button onclick="setLED('led1',1)">LED1 ON</button>
+<button onclick="setLED('led1',0)">LED1 OFF</button>
 
-<button onclick="setLED('led2', 1)">LED 2 ON</button>
-<button onclick="setLED('led2', 0)">LED 2 OFF</button>
-<br><br>
+<button onclick="setLED('led2',1)">LED2 ON</button>
+<button onclick="setLED('led2',0)">LED2 OFF</button>
 
-<button onclick="setLED('led3', 1)">LED 3 ON</button>
-<button onclick="setLED('led3', 0)">LED 3 OFF</button>
+<button onclick="setLED('led3',1)">LED3 ON</button>
+<button onclick="setLED('led3',0)">LED3 OFF</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
@@ -24,20 +22,25 @@ import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.15.
 
 const firebaseConfig = {
   apiKey: "AIzaSyANoU7Fkz1izOCnJDR2TX0-YrY7nNF3d20",
-    authDomain: "temperature-448aa.firebaseapp.com",
-    databaseURL: "https://temperature-448aa-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "temperature-448aa",
-    storageBucket: "temperature-448aa.firebasestorage.app",
-    messagingSenderId: "615581732215",
-    appId: "1:615581732215:web:b94355bdd96204df42a572",
-    measurementId: "G-728K8BT7GP"
+  authDomain: "temperature-448aa.firebaseapp.com",
+  databaseURL: "https://temperature-448aa-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "temperature-448aa",
+  storageBucket: "temperature-448aa.firebasestorage.app",
+  messagingSenderId: "615581732215",
+  appId: "1:615581732215:web:b94355bdd96204df42a572"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 window.setLED = function(led, value) {
-  set(ref(db, "led/" + led), value);
+  set(ref(db, "led/" + led), value)
+    .then(() => {
+      console.log("Updated:", led, value);
+    })
+    .catch((error) => {
+      console.log("Error:", error);
+    });
 }
 </script>
 
